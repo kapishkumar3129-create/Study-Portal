@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - Portal TGPSI</title>
+    <link rel="stylesheet" href="auth.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="background-text">REGISTO</div>
+
+    <div class="auth-box">
+        <span class="material-icons" style="font-size: 50px; color: #00c6ff; margin-bottom: 10px;">person_add</span>
+        <h2>Criar Conta</h2>
+        
+        <div style="text-align: left;">
+            <label style="font-size: 12px; color: #888; margin-left: 5px;">E-mail</label>
+            <input type="email" id="email" placeholder="Ex: aluno@gmail.com">
+            
+            <label style="font-size: 12px; color: #888; margin-left: 5px;">Palavra-passe</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+
+        <button id="regBtn">Registar</button>
+        <p id="msg" style="color: #ff5555; font-size: 14px; margin-top: 15px;"></p>
+        
+        <div style="margin-top: 20px;">
+            <a href="login.html" style="color: #888; font-size: 13px;">Já tem conta? Entrar</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase.js';
+        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, setDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        document.getElementById('regBtn').addEventListener('click', async () => {
+            const email = document.getElementById("email").value;
+            const pass = document.getElementById("password").value;
+            const msg = document.getElementById("msg");
+
+            if(!email || !pass) { msg.innerText = "Preencha tudo."; return; }
+            msg.innerText = "A criar conta...";
+
+            try {
+                // 1. Create Auth
+                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                
+                // 2. Create Profile in DB
+                await setDoc(doc(db, "users", cred.user.uid), {
+                    email: email,
+                    role: "user",
+                    isBanned: false,
+                    joinDate: new Date().toLocaleString()
+                });
+
+                // 3. Log
+                await addDoc(collection(db, "logs"), {
+                    user: email, action: "Novo Registo", time: new Date().toLocaleString()
+                });
+
+                msg.style.color = "#00ff88";
+                msg.innerText = "Conta criada! A redirecionar...";
+                setTimeout(() => window.location.href = "index.html", 1500);
+
+            } catch (error) {
+                msg.style.color = "#ff5555";
+                if(error.code.includes('email-already-in-use')) msg.innerText = "Email já em uso.";
+                else if(error.code.includes('weak-password')) msg.innerText = "Password fraca.";
+                else msg.innerText = error.message;
+            }
+        });
+    </script>
+</body>
+</html>

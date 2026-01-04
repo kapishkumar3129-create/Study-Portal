@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Upload</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .upload-container { padding: 50px; max-width: 800px; margin: auto; }
+        .upload-card { background: #111; padding: 30px; border-radius: 20px; border: 1px solid #333; }
+        textarea, select { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; margin-bottom: 20px; }
+        .btn-upload { background: #00c6ff; color: black; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><span class="material-icons">arrow_back</span> Voltar</a>
+        <h3>UPLOAD CENTER</h3>
+    </div>
+
+    <div class="upload-container">
+        <div class="upload-card">
+            <h2>Publicar Conteúdo</h2>
+            
+            <label>Módulo</label>
+            <select id="moduleTarget">
+                <option value="PSI_M1">PSI - M1</option>
+                <option value="PSI_M2">PSI - M2</option>
+                <option value="RC_M1">RC - M1</option>
+            </select>
+
+            <label>Conteúdo (HTML)</label>
+            <textarea id="textInput" rows="10"></textarea>
+
+            <button class="btn-upload" id="saveBtn">PUBLICAR NA CLOUD</button>
+            <p id="statusMsg" style="margin-top:10px;"></p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const u = await getDoc(doc(db, "users", user.uid));
+                if (!u.exists() || u.data().role !== 'owner') {
+                    window.location.href = "index.html";
+                }
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        document.getElementById('saveBtn').addEventListener('click', async () => {
+            const target = document.getElementById('moduleTarget').value;
+            const content = document.getElementById('textInput').value;
+            const status = document.getElementById('statusMsg');
+
+            if(!content) { status.innerText = "Vazio!"; return; }
+            status.innerText = "A enviar...";
+
+            try {
+                await setDoc(doc(db, "modules", target), {
+                    content: content,
+                    updatedAt: new Date(),
+                    author: auth.currentUser.email
+                });
+                status.style.color = "#00ff88";
+                status.innerText = "Publicado com sucesso!";
+            } catch (e) {
+                status.style.color = "red";
+                status.innerText = "Erro: " + e.message;
+            }
+        });
+    </script>
+</body>
+</html>

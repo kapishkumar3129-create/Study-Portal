@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Estudo - Oficial</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+
+<div id="mySidebar" class="sidebar">
+ <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+ <a href="index.html" class="active"><span class="material-icons">home</span> Página Inicial</a>
+  
+ <div class="user-sidebar-info">
+  <span class="material-icons">account_circle</span>
+  <span id="usernameDisplay">Carregando...</span>
+ </div>
+
+ <button class="dropdown-btn">💻 Consolas <span class="material-icons">expand_more</span></button>
+ <div class="dropdown-container">
+   <a href="html_editor.html" class="sub-item">🌐 HTML/CSS/JS</a>
+   <a href="#" class="sub-item">🟨 JavaScript Node</a>
+   <a href="#" class="sub-item">🐍 Python</a>
+ </div>
+
+ <button class="dropdown-btn">📅 1º Ano TGPSI <span class="material-icons">expand_more</span></button>
+ <div class="dropdown-container">
+   <button class="sub-dropdown-btn">💻 PSI ▾</button>
+   <div class="sub-dropdown-container">
+     <a href="#">M1: Algoritmo</a>
+     <a href="#">M2: Estruturas de Controlo</a>
+   </div>
+   <button class="sub-dropdown-btn">🌐 RC ▾</button>
+   <div class="sub-dropdown-container">
+     <a href="#">M1: Introdução às Redes</a>
+   </div>
+ </div>
+
+ <a href="notes.html"><span class="material-icons">description</span> Notas</a>
+ 
+ <a href="admin_console.html" id="adminLink" style="display:none; color: #ff5555;">
+   <span class="material-icons">admin_panel_settings</span> Admin Console
+ </a>
+ <a href="admin_upload.html" id="uploadLink" style="display:none; color: #00c6ff;">
+    <span class="material-icons">cloud_upload</span> Upload Conteúdo
+ </a>
+</div>
+
+<div id="main">
+ <div class="top-bar">
+  <div class="left-group">
+    <button class="openbtn" onclick="openNav()">&#9776;</button>
+    <input type="text" id="moduleSearch" placeholder="Pesquisar..." class="search-bar">
+  </div>
+   
+  <div style="display: flex; align-items: center; gap: 15px;">
+    <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()">🌙</button>
+     
+    <div class="profile-container">
+      <div class="profile-circle" onclick="toggleProfile()" id="userInitial">U</div>
+      <div class="profile-dropdown" id="pDropdown">
+        <div class="dropdown-user-info">
+          <div class="dropdown-avatar-large" id="largeInitial">U</div>
+          <strong id="pUsername">Utilizador</strong>
+          <small id="roleDisplay" style="color:#888; display:block; font-size:11px; margin-top:5px;">User</small>
+        </div>
+        <hr style="border:0; border-top:1px solid #333; margin:10px 0;">
+        <a href="#" onclick="logout()" style="color:#ff5555; display:block; text-align:center;">Sair da Conta</a>
+      </div>
+    </div>
+  </div>
+ </div>
+
+ <div class="hero-section">
+   <div class="glass-square animate-pop">
+     <h1>Portal de Estudo</h1>
+     <p>Todos os Módulos e Ferramentas para praticar</p>
+     <div class="accent-line"></div>
+     <a href="notes.html" class="simple-blue-link">Aceder às Notas</a>
+   </div>
+ </div>
+</div>
+
+<script type="module" src="script.js"></script>
+
+</body>
+</html>

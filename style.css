@@ -1,0 +1,71 @@
+/* --------------------------------
+   style.css
+   -------------------------------- */
+:root {
+  --bg-color: #ffffff; --text-color: #222222;
+  --bar-bg: rgba(255, 255, 255, 0.9); --sidebar-bg: #111111;
+  --border-color: #eeeeee; --accent-color: #3498db;
+  --editor-bg: #ffffff; --card-bg: #ffffff;
+}
+
+.dark-theme {
+  --bg-color: #121212; --text-color: #ffffff;
+  --bar-bg: rgba(30, 30, 30, 0.9); --sidebar-bg: #000000;
+  --border-color: #333333; --editor-bg: #1e1e1e; --card-bg: #1e1e1e;
+}
+
+body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: 0.4s; }
+
+/* Sidebar */
+.sidebar { height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: var(--sidebar-bg); overflow-x: hidden; transition: 0.5s; padding-top: 60px; }
+.sidebar a, .dropdown-btn, .sub-dropdown-btn { padding: 15px 25px; text-decoration: none; font-size: 16px; color: #888; display: block; border: none; background: none; width: 100%; text-align: left; cursor: pointer; transition: 0.2s; }
+.sidebar a:hover, .dropdown-btn:hover, .sub-dropdown-btn:hover { color: #fff; background: #1a1a1a; }
+.sidebar .closebtn { position: absolute; top: 15px; right: 15px; font-size: 24px; background-color: #ff4d4d; color: white !important; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; transition: 0.3s; padding: 0 !important; line-height: 0; }
+.sidebar .closebtn:hover { background-color: #ff0000; transform: scale(1.1); }
+
+.dropdown-container, .sub-dropdown-container { display: none; background-color: #0d0d0d; }
+.sub-item { padding-left: 45px !important; border-left: 2px solid var(--accent-color); color: #777 !important; }
+
+/* Top Bar */
+.top-bar { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 10px 25px; background-color: var(--bar-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); z-index: 99; }
+.search-bar { padding: 8px 15px; border-radius: 20px; border: 1px solid #ddd; margin-left: 15px; background: var(--bg-color); color: var(--text-color); width: 200px; outline: none; }
+.openbtn { font-size: 22px; cursor: pointer; background: none; border: none; color: var(--text-color); }
+.theme-btn { padding: 8px 15px; border-radius: 5px; cursor: pointer; border: none; background: var(--text-color); color: var(--bg-color); font-weight: bold; }
+
+/* Hero Section */
+.hero-section { height: 90vh; background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; }
+.glass-square { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 40px; padding: 60px 30px; text-align: center; color: white; width: 80%; max-width: 500px; }
+.accent-line { width: 50px; height: 4px; background: var(--accent-color); margin: 20px auto; border-radius: 2px; }
+
+/* Notes Editor */
+.notes-container { max-width: 900px; margin: 30px auto; padding: 20px; }
+#editor-container { height: 400px; background: var(--editor-bg); color: var(--text-color); border-radius: 0 0 8px 8px; border: 1px solid var(--border-color); }
+.export-group { margin-top: 20px; display: flex; gap: 10px; }
+.btn-note { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
+.pdf-btn { background: #e74c3c; } .word-btn { background: #2b579a; } .html-btn { background: #f39c12; }
+
+/* Profile Dropdown */
+.profile-container { position: relative; display: flex; align-items: center; }
+.profile-circle { width: 38px; height: 38px; background-color: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; border: 2px solid transparent; transition: 0.3s; }
+.profile-circle:hover { border-color: white; transform: scale(1.05); }
+.profile-dropdown { display: none; position: absolute; top: 50px; right: 0; background: var(--bar-bg); backdrop-filter: blur(15px); border: 1px solid var(--border-color); border-radius: 15px; width: 220px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 1000; }
+.dropdown-user-info { text-align: center; margin-bottom: 15px; }
+.dropdown-avatar-large { width: 60px; height: 60px; background: var(--accent-color); border-radius: 50%; margin: 0 auto 10px; font-size: 24px; display: flex; align-items: center; justify-content: center; color: white; }
+
+/* Links */
+.simple-blue-link { color: #007bff !important; text-decoration: underline !important; font-weight: bold; background: transparent !important; padding: 0 !important; margin-top: 15px; display: inline-block; transition: color 0.3s ease; }
+.simple-blue-link:hover { color: #00c6ff !important; }
+
+/* Animations */
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+.animate-pop { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+/* Sidebar User Info */
+.user-sidebar-info { padding: 20px 25px; display: flex; align-items: center; gap: 12px; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
+
+/* Admin Table */
+table { width: 100%; border-collapse: collapse; margin-top: 20px; background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
+th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); color: var(--text-color); }
+th { background: rgba(100,100,100,0.1); font-weight: 700; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; }
+.status-tag { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+.status-active { background: rgba(0, 200, 83, 0.2); color: #00c853; }

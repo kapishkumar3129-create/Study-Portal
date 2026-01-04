@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Portal TGPSI</title>
+    <link rel="stylesheet" href="auth.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="background-text">TGPSI</div>
+
+    <div class="auth-box">
+        <span class="material-icons" style="font-size: 50px; color: #00c6ff; margin-bottom: 10px;">lock</span>
+        <h2>Entrar</h2>
+        
+        <div style="text-align: left;">
+            <input type="text" id="email" placeholder="E-mail">
+            <input type="password" id="password" placeholder="Palavra-passe">
+        </div>
+
+        <button id="loginBtn">Aceder ao Portal</button>
+        
+        <p id="msg" style="color: #ff5555; font-size: 14px; margin-top: 15px;"></p>
+        
+        <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+            <a href="forgot.html" style="color: #888; text-decoration: none; font-size: 13px;">Esqueceu-se da password?</a>
+            <br><br>
+            <a href="register.html" style="color: #00c6ff; text-decoration: none; font-weight: bold;">Criar nova conta</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase.js';
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, getDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const email = document.getElementById("email").value;
+            const pass = document.getElementById("password").value;
+            const msg = document.getElementById("msg");
+
+            if(!email || !pass) { msg.innerText = "Preencha todos os campos."; return; }
+            msg.innerText = "A verificar...";
+            msg.style.color = "#ccc";
+
+            try {
+                // 1. Auth with Firebase
+                const cred = await signInWithEmailAndPassword(auth, email, pass);
+                const user = cred.user;
+
+                // 2. Check Database for Ban
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists() && userDoc.data().isBanned) {
+                    msg.style.color = "#ff5555";
+                    msg.innerText = "Esta conta está suspensa.";
+                    return;
+                }
+
+                // 3. Log Activity
+                await addDoc(collection(db, "logs"), {
+                    user: email, action: "Login", time: new Date().toLocaleString()
+                });
+
+                msg.style.color = "#00ff88";
+                msg.innerText = "Sucesso! A entrar...";
+                setTimeout(() => window.location.href = "index.html", 1000);
+
+            } catch (error) {
+                msg.style.color = "#ff5555";
+                if(error.code.includes('invalid-credential')) msg.innerText = "Dados incorretos.";
+                else msg.innerText = "Erro: " + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

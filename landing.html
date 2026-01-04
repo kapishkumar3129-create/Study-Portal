@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo - Portal Study</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #000000 !important;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            perspective: 1500px;
+        }
+
+        .background-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform-style: preserve-3d;
+            transform: translate(-50%, -50%) rotateX(20deg) rotateY(-10deg) translateZ(-250px);
+            font-size: 13vw;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.15);
+            white-space: nowrap;
+            z-index: 1;
+            user-select: none;
+            pointer-events: none;
+            text-transform: uppercase;
+            font-family: 'Arial Black', sans-serif;
+            animation: float3D 10s ease-in-out infinite;
+        }
+
+        @keyframes float3D {
+            0%, 100% { transform: translate(-50%, -50%) rotateX(20deg) rotateY(-10deg) translateZ(-250px); }
+            50% { transform: translate(-50%, -50%) rotateX(25deg) rotateY(-5deg) translateZ(-180px); }
+        }
+
+        .landing-card {
+            position: relative;
+            z-index: 2; 
+            background: rgba(255, 255, 255, 0.02) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 40px;
+            border-radius: 40px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        h1 { color: white; font-size: 3em; margin: 0; font-weight: 900; transform: translateZ(60px); }
+        p { color: rgba(255,255,255,0.5); margin-bottom: 30px; transform: translateZ(40px); }
+
+        .controls-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            transform: translateZ(50px);
+        }
+
+        .terms-container {
+            color: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+
+        .info-link {
+            color: #00c6ff;
+            text-decoration: none;
+            font-size: 0.85em;
+            cursor: pointer;
+            border-bottom: 1px dashed #00c6ff;
+            padding-bottom: 2px;
+            transition: 0.3s;
+        }
+        .info-link.read { color: #2ecc71; border-color: #2ecc71; }
+
+        .continue-btn {
+            background: white !important;
+            color: black !important;
+            border-radius: 50px !important;
+            padding: 16px 0;
+            font-weight: 800;
+            width: 100%;
+            border: none;
+            margin-top: 10px;
+            transition: 0.4s;
+            opacity: 0.3;
+            cursor: pointer; 
+        }
+
+        .continue-btn.ready { opacity: 1; box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+
+        /* Modal Settings */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background: #111;
+            padding: 40px 30px;
+            border-radius: 25px;
+            max-width: 380px;
+            width: 85%;
+            color: white;
+            text-align: center;
+            border: 2px solid #00c6ff;
+        }
+
+        .important-tag {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #00c6ff;
+            color: black;
+            padding: 4px 20px;
+            font-weight: 900;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-text">STUDY PORTAL</div>
+
+    <div class="landing-card" id="tiltCard">
+        <h1>Portal Study</h1>
+        <p>Ambiente de Aprendizagem</p>
+        
+        <div class="controls-group">
+            <label class="terms-container">
+                <input type="checkbox" id="termsCheck" style="width: 20px; height: 20px;">
+                <span>Aceito os Termos de Uso</span>
+            </label>
+            
+            <span class="info-link" id="infoLink" onclick="openTerms()">Como funcionam os dados?</span>
+
+            <button id="continueBtn" class="continue-btn" onclick="validateEntry()">ENTRAR / REGISTAR</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="infoModal">
+        <div class="modal-box" style="position: relative;">
+            <div class="important-tag">CLOUD SYNC</div>
+            <h3 style="color: #00c6ff;">Sincronização Segura</h3>
+            <p style="font-size: 0.95em; line-height: 1.6; color: #eee;">
+                O Portal Study utiliza <b>Firebase Cloud</b>. 
+                Isso significa que as tuas notas e documentos ficam salvos na tua conta,
+                acessíveis de <b>qualquer dispositivo</b>.
+                <br><br>
+                Ao continuar, concordas com o armazenamento seguro dos teus dados.
+            </p>
+            <button onclick="closeTerms()" style="background:#00c6ff; border:none; padding:12px; width:100%; border-radius:10px; font-weight:800; cursor:pointer;">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+
+        // 1. Check if user is already logged in (Auto-Redirect)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("Usuário já logado:", user.email);
+                window.location.href = "dashboard.html"; // Redirects to main app
+            }
+        });
+
+        // Global functions for HTML interaction
+        window.hasReadTerms = false;
+
+        window.openTerms = function() {
+            document.getElementById('infoModal').style.display = 'flex';
+            window.hasReadTerms = true;
+            document.getElementById('infoLink').classList.add('read');
+            window.checkStatus();
+        }
+
+        window.closeTerms = function() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+
+        window.checkStatus = function() {
+            const checkbox = document.getElementById('termsCheck');
+            const btn = document.getElementById('continueBtn');
+            
+            if (checkbox.checked && window.hasReadTerms) {
+                btn.classList.add('ready');
+            } else {
+                btn.classList.remove('ready');
+            }
+        }
+
+        window.validateEntry = function() {
+            const checkbox = document.getElementById('termsCheck');
+            
+            if (!window.hasReadTerms) {
+                alert("Por favor, leia as informações de dados primeiro!");
+                return;
+            }
+            if (!checkbox.checked) {
+                alert("Você deve aceitar os termos para continuar.");
+                return;
+            }
+            window.location.href = "login.html";
+        }
+
+        // Event Listeners
+        document.getElementById('termsCheck').addEventListener('change', window.checkStatus);
+
+        document.addEventListener('mousemove', (e) => {
+            const tiltCard = document.getElementById('tiltCard');
+            if(tiltCard) {
+                const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+                const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+                tiltCard.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+    </script>
+</body>
+</html>

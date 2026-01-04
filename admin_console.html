@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .log-box { background: #111; padding: 10px; height: 300px; overflow-y: auto; font-family: monospace; border: 1px solid #333; }
+        .log-entry { border-bottom: 1px solid #222; padding: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #111; }
+        td, th { padding: 10px; border: 1px solid #333; text-align: left; }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="top-bar">
+        <a href="index.html" style="color:white; text-decoration:none;"><span class="material-icons">arrow_back</span> Voltar</a>
+        <h3 style="color:#ff4444;">ADMINISTRAÇÃO</h3>
+    </div>
+
+    <div class="notes-container">
+        <h3>📜 Logs do Sistema</h3>
+        <div id="logBox" class="log-box">Carregando...</div>
+
+        <h3>👥 Utilizadores</h3>
+        <table>
+            <thead><tr><th>Email</th><th>Role</th><th>Ação</th></tr></thead>
+            <tbody id="userTable"></tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { collection, query, orderBy, limit, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if (!snap.exists() || snap.data().role !== 'owner') {
+                    alert("Acesso Negado!");
+                    window.location.href = "index.html";
+                    return;
+                }
+                loadData();
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        async function loadData() {
+            // Logs
+            const q = query(collection(db, "logs"), orderBy("time", "desc"), limit(20));
+            const logs = await getDocs(q);
+            let logHTML = "";
+            logs.forEach(d => {
+                const l = d.data();
+                logHTML += `<div class="log-entry"><span style="color:#00c6ff">[${l.time}]</span> <b>${l.user}</b>: ${l.action}</div>`;
+            });
+            document.getElementById('logBox').innerHTML = logHTML;
+
+            // Users
+            const users = await getDocs(collection(db, "users"));
+            let userHTML = "";
+            users.forEach(d => {
+                const u = d.data();
+                const btnColor = u.isBanned ? "green" : "red";
+                const btnText = u.isBanned ? "DESBANIR" : "BANIR";
+                userHTML += `<tr>
+                    <td>${u.email}</td>
+                    <td>${u.role}</td>
+                    <td><button onclick="window.toggleBan('${d.id}', ${!u.isBanned})" style="color:${btnColor}; background:none; border:none; cursor:pointer;">${btnText}</button></td>
+                </tr>`;
+            });
+            document.getElementById('userTable').innerHTML = userHTML;
+        }
+
+        window.toggleBan = async (uid, status) => {
+            if(confirm("Alterar estado do utilizador?")) {
+                await updateDoc(doc(db, "users", uid), { isBanned: status });
+                loadData();
+            }
+        };
+    </script>
+</body>
+</html>
